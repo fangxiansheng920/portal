@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.icheer.portal.mapper.PortalMapper">
+
+    <!--获取所有站点列表id-->
+    <select id="getAllPortalIdList" resultType="java.lang.Long">
+        select id
+        from portals
+        where deleted = 0
+          and (public_flag = 1 or user_id = #{userId})
+        order by create_time desc
+    </select>
+
+    <!--获取用户创建的站点列表id-->
+    <select id="getMyCreatePortalIdList" resultType="java.lang.Long">
+        select id
+        from portals
+        where user_id = #{id}
+          and deleted = 0
+          and `status` != -1
+        order by create_time desc
+    </select>
+
+    <!--获取用户创建的站点列表-->
+    <select id="getMyCreatePortalList" resultType="cn.icheer.portal.dto.PortalWithCollectFlagDTO">
+        select portals.id,
+               user_id,
+               title,
+               portal_url,
+               public_flag,
+               portal_QRcode,
+               `status`,
+               description,
+               access_type,
+               remark,
+               create_by,
+               portals.create_time,
+               update_time,
+               deleted,
+               portal_logo,
+               (select group_concat(tag_id) from portal_tag where portal_id = portals.id) as tagIds
+        from portals
+        where user_id = #{id}
+          and deleted = 0
+          and `status` != -1
+        order by create_time desc
+    </select>
+
+    <!--获取用户收藏的站点列表id(置顶的放前面)-->
+    <select id="getMyCollectPortalIdList" resultType="java.lang.Long">
+        select portal_id
+        from collect
+        where user_id = #{id}
+          and do_collect = 1
+        order by case when is_top = 1 then 0 else 1 end, update_time desc
+    </select>
+
+    <!--获取用户收藏的站点列表-->
+    <select id="getMyCollectPortalList" resultType="cn.icheer.portal.dto.PortalWithCollectFlagDTO">
+        select portals.id,
+        user_id,
+        title,
+        portal_url,
+        public_flag,
+        portal_QRcode,
+        `status`,
+        description,
+        access_type,
+        remark,
+        create_by, portals.create_time, update_time, deleted, portal_logo,
+        (select group_concat(tag_id) from portal_tag where portal_id = portals.id) as tagIds
+        from portals
+        <where>
+            <if test="portalIdList != null and portalIdList.size() > 0">
+                portals.id in
+                <foreach collection="portalIdList" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            # and deleted = 0
+            and `status` != -1
+            and (public_flag = 1 or user_id = #{userId})
+        </where>
+        <if test="portalIdList != null and portalIdList.size() > 0">
+            order by field(portals.id,
+            <foreach collection="portalIdList" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <!--获取共享的站点列表id-->
+    <select id="getSharedPageIdList" resultType="java.lang.Long">
+        select id
+        from portals
+        where user_id != #{id}
+          and public_flag = 1
+          and deleted = 0
+          and `status` != -1
+        order by create_time desc
+    </select>
+
+    <!--通过站点id获取站点信息-->
+    <select id="getPortalInfoById" resultType="portal">
+        select id,
+               user_id,
+               title,
+               portal_url,
+               public_flag,
+               portal_QRcode,
+               `status`,
+               description,
+               access_type,
+               remark,
+               create_by,
+               create_time,
+               update_time,
+               deleted,
+               portal_logo
+        from portals
+        where id = #{id}
+    </select>
+
+    <!--通过关键字搜索站点列表-->
+    <select id="searchPortalByKeyword" resultType="cn.icheer.portal.dto.PortalWithCollectFlagDTO">
+        select portals.id,
+        user_id,
+        title,
+        portal_url,
+        public_flag,
+        portal_QRcode,
+        `status`,
+        description,
+        access_type,
+        remark,
+        create_by,
+        portals.create_time,
+        update_time,
+        deleted,
+        portal_logo,
+        (select group_concat(tag_id) from portal_tag where portal_id = portals.id) as tagIds
+        from portals
+        <where>
+            <if test="portalIdList != null and portalIdList.size() > 0">
+                portals.id in
+                <foreach collection="portalIdList" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            and
+            (title like concat('%', #{keyword}, '%') or description like concat('%', #{keyword}, '%') or create_by like
+            concat('%', #{keyword}, '%'))
+            and deleted = 0
+            and `status` != -1
+            and (public_flag = 1
+            or user_id = #{userId})
+        </where>
+        <if test="portalIdList != null and portalIdList.size() > 0">
+            order by field(portals.id,
+            <foreach collection="portalIdList" item="id" separator=",">
+                #{id}
+            </foreach>)
+        </if>
+    </select>
+
+    <!--搜索栏用关键词搜索站点（在收藏中）-->
+    <select id="searchPortalByKeywordInCollect" resultType="cn.icheer.portal.dto.PortalWithCollectFlagDTO">
+        select portals.id,
+        user_id,
+        title,
+        portal_url,
+        public_flag,
+        portal_QRcode,
+        `status`,
+        description,
+        access_type,
+        remark,
+        create_by,
+        portals.create_time,
+        update_time,
+        deleted,
+        portal_logo,
+        (select group_concat(tag_id) from portal_tag where portal_id = portals.id) as tagIds
+        from portals
+        <where>
+            <if test="portalIdList != null and portalIdList.size() > 0">
+                portals.id in
+                <foreach collection="portalIdList" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            and
+            (title like concat('%', #{keyword}, '%') or description like concat('%', #{keyword}, '%') or create_by like
+            concat('%', #{keyword}, '%'))
+            and `status` != -1
+            and (public_flag = 1 or user_id = #{userId})
+        </where>
+        <if test="portalIdList != null and portalIdList.size() > 0">
+            order by field(portals.id,
+            <foreach collection="portalIdList" item="id" separator=",">
+                #{id}
+            </foreach>)
+        </if>
+    </select>
+
+    <!--获取回收站的站点列表(deleted = 1 or status = -1)-->
+    <select id="getDeletedPortal" resultType="portal">
+        select id,
+               user_id,
+               title,
+               portal_url,
+               public_flag,
+               portal_QRcode,
+               `status`,
+               description,
+               access_type,
+               remark,
+               create_by,
+               create_time,
+               update_time,
+               deleted,
+               portal_logo
+        from portals
+        where user_id = #{id}
+          and (deleted = 1 or `status` = -1)
+        order by update_time desc
+    </select>
+
+    <!--通过标签获取站点列表(限制20个)-->
+    <select id="getPortalByTag" resultType="cn.icheer.portal.dto.PortalWithCollectFlagDTO">
+        select portals.id,
+        portals.user_id,
+        portals.title,
+        portals.portal_url,
+        portals.public_flag,
+        portals.portal_QRcode,
+        portals.`status`,
+        portals.description,
+        portals.access_type,
+        portals.remark,
+        portals.create_by,
+        portals.create_time,
+        portals.update_time,
+        portals.deleted,
+        portals.portal_logo,
+        (select group_concat(tag_id) from portal_tag where portal_id = portals.id) as tagIds
+        from portals
+        inner join portal_tag on portals.id = portal_tag.portal_id
+        left join collect on portals.id = collect.portal_id and collect.user_id = #{userId}
+        where portal_tag.tag_id = #{tagId}
+        and portals.deleted = 0
+        and portals.`status` = 0
+        and (portals.public_flag = 1 or portals.user_id = #{userId})
+        <if test="portalClassifyNumDTO.keyword != null and portalClassifyNumDTO.keyword != '' ">
+            and
+            (portals.title like concat('%', #{portalClassifyNumDTO.keyword}, '%') or
+            portals.description like concat('%', #{portalClassifyNumDTO.keyword}, '%') or
+            portals.create_by like concat('%', #{portalClassifyNumDTO.keyword}, '%'))
+        </if>
+        <if test="portalClassifyNumDTO.isCollect != 2"> <!-- 2表示全部，不筛选-->
+            <choose>
+                <!--1表示已收藏-->
+                <when test="portalClassifyNumDTO.isCollect == 1">
+                    and collect.do_collect = 1 -- 状态为已收藏
+                </when>
+                <!--0表示未收藏-->
+                <when test="portalClassifyNumDTO.isCollect == 0">
+                    and (collect.do_collect is null -- collect表无收藏记录
+                    or collect.do_collect = 0) -- collect表有收藏记录但未收藏
+                </when>
+            </choose>
+        </if>
+        order by create_time desc
+        limit #{portalClassifyNumDTO.num}
+    </select>
+
+    <!--通过标签获取站点列表总数-->
+    <select id="getPortalByTagCount" resultType="java.lang.Integer">
+        select count(1)
+        from portals
+        inner join portal_tag on portals.id = portal_tag.portal_id
+        where portal_tag.tag_id = #{tagId}
+          and deleted = 0
+          and `status` != -1
+          and (public_flag = 1 or user_id = #{userId})
+    </select>
+
+    <!--根据标签获取站点列表（单个标签且分页）-->
+    <select id="getPortalByOneTag" resultType="cn.icheer.portal.dto.PortalWithCollectFlagDTO">
+        select portals.id,
+        portals.user_id,
+        portals.title,
+        portals.portal_url,
+        portals.public_flag,
+        portals.portal_QRcode,
+        portals.`status`,
+        portals.description,
+        portals.access_type,
+        portals.remark,
+        portals.create_by,
+        portals.create_time,
+        portals.update_time,
+        portals.deleted,
+        portals.portal_logo,
+        (select group_concat(tag_id) from portal_tag where portal_id = portals.id) as tagIds
+        from portals
+        inner join portal_tag on portals.id = portal_tag.portal_id
+        left join collect on portals.id = collect.portal_id and collect.user_id = #{userId}
+        where portal_tag.tag_id = #{portalGetByTagDTO.tagId}
+        and portals.deleted = 0
+        and portals.`status` = 0
+        and (portals.public_flag = 1 or portals.user_id = #{userId})
+        <if test="portalGetByTagDTO.keyword != null and portalGetByTagDTO.keyword != '' ">
+            and
+            (portals.title like concat('%', #{portalGetByTagDTO.keyword}, '%') or
+            portals.description like concat('%', #{portalGetByTagDTO.keyword}, '%') or
+            portals.create_by like concat('%', #{portalGetByTagDTO.keyword}, '%'))
+        </if>
+        <if test="portalGetByTagDTO.isCollect != 2"> <!-- 2表示全部，不筛选-->
+            <choose>
+                <!--1表示已收藏-->
+                <when test="portalGetByTagDTO.isCollect == 1">
+                    and collect.do_collect = 1 -- 状态为已收藏
+                </when>
+                <!--0表示未收藏-->
+                <when test="portalGetByTagDTO.isCollect == 0">
+                    and (collect.do_collect is null -- collect表无收藏记录
+                    or collect.do_collect = 0) -- collect表有收藏记录但未收藏
+                </when>
+            </choose>
+        </if>
+        order by create_time desc
+    </select>
+
+    <!--获取没有标签的站点总数-->
+    <select id="getPortalNoTagCount" resultType="java.lang.Integer">
+        select count(1)
+        from portals
+        where deleted = 0
+          and `status` != -1
+          and (public_flag = 1 or user_id = #{userId})
+          and not exists(select 1 from portal_tag where portals.id = portal_tag.portal_id)
+    </select>
+
+    <!--获取没有标签的站点-->
+    <select id="getPortalNoTag" resultType="cn.icheer.portal.dto.PortalWithCollectFlagDTO">
+        select portals.id,
+        portals.user_id,
+        portals.title,
+        portals.portal_url,
+        portals.public_flag,
+        portals.portal_QRcode,
+        portals.`status`,
+        portals.description,
+        portals.access_type,
+        portals.remark,
+        portals.create_by,
+        portals.create_time,
+        portals.update_time,
+        portals.deleted,
+        portals.portal_logo
+        from portals
+        left join collect on portals.id = collect.portal_id and collect.user_id = #{userId}
+        where portals.deleted = 0
+        and portals.`status` = 0
+        and (portals.public_flag = 1 or portals.user_id = #{userId})
+        and not exists (select 1 from portal_tag where portals.id = portal_tag.portal_id)
+        <if test="portalClassifyNumDTO.keyword != null and portalClassifyNumDTO.keyword != '' ">
+            and
+            (portals.title like concat('%', #{portalClassifyNumDTO.keyword}, '%') or
+            portals.description like concat('%', #{portalClassifyNumDTO.keyword}, '%') or
+            portals.create_by like concat('%', #{portalClassifyNumDTO.keyword}, '%'))
+        </if>
+        <if test="portalClassifyNumDTO.isCollect != 2"> <!-- 2表示全部，不筛选-->
+            <choose>
+                <!--1表示已收藏-->
+                <when test="portalClassifyNumDTO.isCollect == 1">
+                    and collect.do_collect = 1 -- 状态为已收藏
+                </when>
+                <!--0表示未收藏-->
+                <when test="portalClassifyNumDTO.isCollect == 0">
+                    and (collect.do_collect is null -- collect表无收藏记录
+                    or collect.do_collect = 0) -- collect表有收藏记录但未收藏
+                </when>
+            </choose>
+        </if>
+        order by create_time desc
+        limit #{portalClassifyNumDTO.num}
+    </select>
+
+    <!--获取站点是否公开-->
+    <select id="getPortalPublicFlag" resultType="java.lang.Short">
+        select public_flag
+        from portals
+        where id = #{portalId}
+    </select>
+
+    <!--获取站点是否属于当前用户-->
+    <select id="getPortalIsOwn" resultType="java.lang.Integer">
+        select case when user_id = #{userId} then 1 else 0 end
+        from portals
+        where id = #{portalId}
+    </select>
+
+    <!--创建站点-->
+    <insert id="createPortal">
+        insert into portals (user_id, title, portal_url, public_flag, portal_QRcode, `status`, description, access_type,
+        create_by, create_time, update_time, portal_logo)
+        values (#{userId}, #{title}, #{portalUrl}, #{publicFlag}, #{portalQRcode}, #{status}, #{description},
+        #{accessType}, #{createBy}, now(), now(), #{portalLogo})
+
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+
+    <!--修改站点删除位（一般是删除）-->
+    <update id="updatePortalDeletedById">
+        update portals
+        set deleted = #{deleted}
+        where id = #{id}
+    </update>
+
+    <!--更新站点更新时间-->
+    <update id="updatePortalUpdateTime">
+        update portals
+        set update_time = now()
+        where id = #{portalId}
+    </update>
+
+    <!--更新（修改）站点信息-->
+    <update id="updatePortalInfo">
+        update portals
+        set title         = #{title},
+            portal_url    = #{portalUrl},
+            public_flag   = #{publicFlag},
+            portal_QRcode = #{portalQRcode},
+            `status`      = #{status},
+            description   = #{description},
+            access_type   = #{accessType},
+            update_time   = now(),
+            portal_logo   = #{portalLogo}
+        where id = #{portalId}
+    </update>
+
+    <!--修改站点创建者-->
+    <update id="modifyPortalCreateBy">
+        update portals
+        set create_by = #{userName}
+        where user_id = #{userId}
+    </update>
+
+    <!--彻底删除站点（从数据库中移除）-->
+    <delete id="deletePortalForever">
+        delete
+        from portals
+        where id = #{portalId}
+    </delete>
+</mapper>

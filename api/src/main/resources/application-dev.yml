@@ -1,0 +1,42 @@
+logging:
+  # 全局日志级别（默认info）
+  level:
+    # 根日志级别（debug会出现问题）
+    root: info
+    # 项目包日志级别
+    cn.icheer.portal: debug
+    # Spring Web 相关日志
+    org.springframework.web: info
+    # MyBatis日志
+    org.mybatis: debug
+    # Hibernate日志
+    org.hibernate: warn
+    # Spring Security 日志
+    org.springframework.security: info
+    # Swagger 日志，避免启动时过多输出
+    io.swagger: warn
+  # 控制台输出配置（Logback）
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}:%L - %msg%n"
+    # 格式
+    # %d：时间戳
+    # %thread：线程名
+    # %-5level：日志级别，左对齐占5个字符宽度
+    # %logger{50}：类名或包名，最多显示50个字符
+    # :%L - ：冒号和行号（可选）
+    # %msg：日志消息内容
+    # %n：换行符
+
+  # 日志文件配置
+  file:
+    # name: logs/dev-portal.log
+  # 日志文件路径和文件名
+    name: /opt/web/portal/logs/dev-portal.log
+  logback:
+    rollingpolicy:
+      # 单个日志文件最大大小
+      max-file-size: 10MB
+      # 日志文件保留天数
+      max-history: 7
+      # 日志文件总大小上限
+      total-size-cap: 100MB

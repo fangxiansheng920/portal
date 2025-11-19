@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.icheer.portal.mapper.CollectMapper">
+    <!--通过站点id获取站点是否被收藏 1：收藏 0：未收藏-->
+    <select id="getPortalDoCollect" resultType="java.lang.Short">
+        select do_collect
+        from collect
+        where portal_id = #{portalId}
+          and user_id = #{userId}
+    </select>
+
+    <!--获取用户收藏过的站点-->
+    <select id="getCollect" resultType="collect">
+        select id, portal_id, user_id, remark, do_collect, is_top
+        from collect
+        where user_id = #{userId}
+          and portal_id = #{portalId}
+    </select>
+
+    <!--获取站点是否置顶 1：是 0：否-->
+    <select id="getCollectPortalIsTop" resultType="java.lang.Short">
+        select is_top
+        from collect
+        where portal_id = #{portalId}
+          and user_id = #{userId}
+    </select>
+
+    <!--判断站点是否被任何人收藏-->
+    <select id="isCollectByAnyone" resultType="java.lang.Integer">
+        select 1
+        from collect
+        where portal_id = #{portalId}
+          and do_collect = 1
+        limit 1
+    </select>
+
+    <!--获取收藏的备注-->
+    <select id="getCollectRemark" resultType="java.lang.String">
+        select remark
+        from collect
+        where portal_id = #{portalId}
+          and user_id = #{userId}
+    </select>
+
+    <!--收藏站点-->
+    <insert id="collectPortal">
+        insert into collect(portal_id, user_id, do_collect, update_time)
+        values (#{collectPortalDTO.portalId}, #{userId}, #{collectPortalDTO.doCollect}, now())
+    </insert>
+
+    <!--更新站点收藏状态-->
+    <update id="updateDoCollect">
+        update collect
+        set do_collect = #{collectPortalDTO.doCollect},
+            update_time = now()
+        where portal_id = #{collectPortalDTO.portalId}
+          and user_id = #{userId}
+    </update>
+
+    <!--我的收藏里置顶站点（可置顶也可取消），同时更新更新时间-->
+    <update id="collectTop">
+        update collect
+        set is_top      = #{collectTopDTO.isTop},
+            update_time = now()
+        where portal_id = #{collectTopDTO.portalId}
+          and user_id = #{userId}
+    </update>
+
+    <!--修改收藏备注-->
+    <update id="modifyCollectRemark">
+        update collect
+        set remark = #{remark}
+        where portal_id = #{portalId}
+          and user_id = #{userId}
+    </update>
+
+    <!--修改更新时间-->
+    <update id="modifyUpdateTime">
+        update collect
+        set update_time = now()
+        where user_id = #{userId}
+          and portal_id = #{portalId}
+    </update>
+
+    <!--通过站点id删除用户收藏-->
+    <delete id="deleteCollectByPortalId">
+        delete
+        from collect
+        where portal_id = #{id}
+    </delete>
+</mapper>

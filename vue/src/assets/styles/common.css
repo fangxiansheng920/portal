@@ -1,0 +1,53 @@
+/* 公共样式 */
+.row-flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.row-flex-space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.row-flex-start {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.col-flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.col-flex-start {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+}
+.margin-top-15 {
+    margin-top: 15px;
+}
+.margin-top-10 {
+    margin-top: 10px;
+}
+.no-padding {
+    padding: 0;
+}
+.no-margin {
+    margin: 0;
+}
+.no-overflow {
+    overflow: hidden;
+}
+.debug {
+    border: 1px solid red;
+}
+.tooltip-text{
+    max-width: 250px;
+    word-break: break-word;
+}

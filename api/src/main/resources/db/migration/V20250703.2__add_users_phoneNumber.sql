@@ -1,0 +1,1 @@
+alter table users add column phone_number varchar(20) not null default '' comment '用户电话号码';

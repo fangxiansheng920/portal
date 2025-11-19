@@ -1,0 +1,68 @@
+# 更改tomcat端口为8088
+server:
+  port: 8088
+
+spring:
+  ####数据源配置####
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.101.128:3306/portal?useSSL=false #mysql连接地址
+    username: root #数据库账号
+    password: willian3984 #数据库密码
+  #redis配置
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 3000
+  #配置文件上传大小
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  #flyway配置
+  flyway:
+    # 启用或禁用 flyway
+    enabled: true
+    # flyway 的 clean 命令会删除指定 schema 下的所有 table, 生产务必禁掉。这个默认值是 false 理论上作为默认配置是不科学的。
+    clean-disabled: true
+    # SQL 脚本的目录,多个路径使用逗号分隔 默认值 classpath:db/migration
+    locations: classpath:db/migration
+    #  metadata 版本控制信息表 默认 flyway_schema_history
+    table: flyway_schema_history
+    # 如果没有 flyway_schema_history 这个 metadata 表， 在执行 flyway migrate 命令之前, 必须先执行 flyway baseline 命令
+    # 设置为 true 后 flyway 将在需要 baseline 的时候, 自动执行一次 baseline。
+    baseline-on-migrate: true
+    # 指定 baseline 的版本号,默认值为 1, 低于该版本号的 SQL 文件, migrate 时会被忽略
+    baseline-version: 1
+    # 字符编码 默认 UTF-8
+    encoding: UTF-8
+    # 是否允许不按顺序迁移 开发建议 true  生产建议 false
+    out-of-order: false
+    # 需要 flyway 管控的 schema list,这里我们配置为flyway  缺省的话, 使用spring.datasource.url 配置的那个 schema,
+    # 可以指定多个schema, 但仅会在第一个schema下建立 metadata 表, 也仅在第一个schema应用migration sql 脚本.
+    # 但flyway Clean 命令会依次在这些schema下都执行一遍. 所以 确保生产 spring.flyway.clean-disabled 为 true
+    schemas: portal
+    # 执行迁移时是否自动调用验证   当你的 版本不符合逻辑 比如 你先执行了 DML 而没有 对应的DDL 会抛出异常
+    validate-on-migrate: true
+
+  profiles:
+    active: dev
+
+
+#mybatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  #定义类别名（方便sql的.xml返回值类型或者参数类型直接名为实体类名）
+  type-aliases-package: cn.icheer.portal.entity
+  #开启下划线转驼峰
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+#pagehelper设置
+pagehelper:
+  ##自动检测方言
+  auto-dialect: true
+  ##开启分页合理化  当前页 <1，会默认查询第一页数据， 当前页>总页数，会默认查询最后一页
+  reasonable: true
+

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.icheer.portal.mapper.UserMapper">
+    <!--通过用户手机号码获取用户信息-->
+    <select id="getUserByPhoneNumber" resultType="user">
+        select id,
+               ep_wx_id,
+               union_id,
+               user_name,
+               password,
+               role,
+               avatar,
+               deleted,
+               last_login,
+               create_time,
+               update_time,
+               phone_number
+        from users
+        where phone_number = #{phoneNumber}
+    </select>
+
+    <!--通过用户id获取用户信息-->
+    <select id="getUserInfoById" resultType="user">
+        select id,
+               ep_wx_id,
+               union_id,
+               user_name,
+               password,
+               role,
+               avatar,
+               deleted,
+               last_login,
+               create_time,
+               update_time,
+               phone_number
+        from users
+        where id = #{id}
+    </select>
+
+    <!--更新最后登录时间-->
+    <update id="updateLastLogin">
+        update users
+        set last_login = now()
+        where phone_number = #{phoneNumber}
+    </update>
+
+    <!--第一次快速登录时更新用户信息-->
+    <update id="insertUserInfo">
+        update users
+        set ep_wx_id   = #{epWxId},
+            user_name  = #{userName},
+            last_login = now()
+        where phone_number = #{phoneNumber}
+    </update>
+
+    <!--修改密码-->
+    <update id="changePassword">
+        update users
+        set password = #{userChangePassword.newPassword}
+        where id = #{userId}
+    </update>
+
+    <!--设置密码-->
+    <update id="setPassword">
+        update users
+        set password = #{password}
+        where id = #{userId}
+    </update>
+
+    <!--修改用户信息-->
+    <update id="modifyUserInfo">
+        update users
+        set user_name = #{userModifyInfo.userName},
+            avatar    = #{userModifyInfo.avatar}
+        where id = #{userId}
+    </update>
+
+    <!--手机号密码注册-->
+    <insert id="registerUser">
+        insert into users (phone_number, password)
+        values (#{phoneNumber}, #{password});
+    </insert>
+
+
+</mapper>

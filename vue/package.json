@@ -1,0 +1,61 @@
+{
+  "name": "Portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "serve": "vite serve",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint --cache --max-warnings 0 \"{src,mock,build}/**/*.{vue,js,ts,tsx}\" --fix",
+    "lint:eslint": "eslint --cache --max-warnings 0  \"{src,mock,build}/**/*.{vue,js,ts,tsx}\" --fix"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@vicons/ionicons5": "^0.10.0",
+    "axios": "^1.10.0",
+    "core-js": "^3.8.3",
+    "element-plus": "^2.10.2",
+    "jwt-decode": "^4.0.0",
+    "mitt": "^3.0.1",
+    "pinia": "^3.0.3",
+    "register-service-worker": "^1.7.2",
+    "typescript": "^5.8.3",
+    "vue": "^3.5.17",
+    "vue-native-websocket": "^2.0.15",
+    "vue-qr": "^4.0.9",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/compiler-sfc": "^3.5.17",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "vite": "^7.1.1",
+    "vite-plugin-pwa": "^1.0.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser",
+      "requireConfigFile": false
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}

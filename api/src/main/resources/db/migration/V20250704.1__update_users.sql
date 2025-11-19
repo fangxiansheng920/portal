@@ -1,0 +1,1 @@
+alter table users change column unionid union_id varchar(255);

@@ -1,0 +1,26 @@
+# 生产环境日志配置
+logging:
+  # 全局日志级别（生产环境默认INFO，减少冗余）
+  level:
+    root: INFO
+    cn.icheer.portal: INFO  # 项目包日志级别（生产环境一般不开启DEBUG）
+    org.springframework.web: WARN  # Web相关只输出WARN及以上
+    org.mybatis: INFO  # MyBatis日志关闭DEBUG（避免SQL泄露敏感信息）
+    org.hibernate: WARN
+    org.springframework.security: WARN
+    io.swagger: ERROR  # 生产环境关闭Swagger日志
+
+  # 日志文件配置（生产环境必须输出到文件）
+  file:
+    name: logs/prod-portal.log  # 日志文件路径
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"  # 文件日志格式（可简化，去掉行号）
+
+  # 滚动日志配置（Logback滚动策略）
+  logback:
+    rollingpolicy:
+      file-name-pattern: logs/prod-portal.%d{yyyy-MM-dd}.%i.log  # 滚动文件名格式（按天+序号）
+      max-file-size: 50MB  # 单个文件最大50MB
+      max-history: 30  # 保留30天日志
+      total-size-cap: 5GB  # 总日志大小上限5GB
+      clean-history-on-start: false  # 启动时不清理历史日志

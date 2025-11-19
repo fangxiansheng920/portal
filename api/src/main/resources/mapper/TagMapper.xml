@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.icheer.portal.mapper.TagMapper">
+
+    <!-- 获取所有标签 -->
+    <select id="getAllTags" resultType="tag">
+        select id, name, icon, color
+        from tags
+    </select>
+
+    <!-- 根据标签名获取标签 -->
+    <select id="getTagByName" resultType="tag">
+        select id, name, icon, color
+        from tags
+        where name = #{tagName}
+    </select>
+
+    <!-- 根据标签ID获取标签 -->
+    <select id="getTagById" resultType="tag">
+        select id, name, icon, color
+        from tags
+        where id = #{tagId}
+    </select>
+
+    <!-- 判断标签是否存在 -->
+    <select id="getIdIsExist" resultType="java.lang.Integer">
+        select count(1)
+        from tags
+        where id = #{tagId}
+    </select>
+
+    <!-- 创建(添加)标签 -->
+    <insert id="createTag">
+        insert into tags(name, icon, color)
+        values (#{tagName}, #{icon}, #{color})
+    </insert>
+
+    <!-- 修改标签 -->
+    <update id="modifyTag">
+        update tags
+        set name = #{tagName},
+            icon = #{icon},
+            color = #{color}
+        where id = #{id}
+    </update>
+
+    <!-- 删除标签 -->
+    <delete id="deleteTag">
+        delete
+        from tags
+        where id = #{tagId}
+    </delete>
+</mapper>

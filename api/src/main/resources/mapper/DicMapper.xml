@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.icheer.portal.mapper.DicMapper">
+
+    <!-- 查询所有字典 -->
+    <select id="getAllDic" resultType="Dic">
+        select dic_id,
+               dic_name,
+               dic_key,
+               dic_value,
+               dic_code,
+               color,
+               order_number,
+               remark
+        from dic
+    </select>
+
+    <!-- 查询字典 -->
+    <select id="getDic" resultType="Dic">
+        select dic_id,
+               dic_name,
+               dic_key,
+               dic_value,
+               dic_code,
+               color,
+               order_number,
+               remark
+        from dic
+        where dic_name = #{dicName}
+          and dic_key = #{dicKey}
+    </select>
+
+    <!-- 添加字典 -->
+    <insert id="addDic">
+        insert into dic(dic_name, dic_key, dic_value, dic_code, color, order_number, remark)
+        values (#{dicName}, #{dicKey}, #{dicValue}, #{dicCode}, #{color}, #{orderNumber}, #{remark})
+    </insert>
+
+    <!-- 修改字典 -->
+    <update id="modifyDic">
+        update dic
+        set dic_name     = #{dicName},
+            dic_key      = #{dicKey},
+            dic_value    = #{dicValue},
+            dic_code     = #{dicCode},
+            color        = #{color},
+            order_number = #{orderNumber},
+            remark       = #{remark}
+        where dic_id = #{dicId}
+    </update>
+
+    <!-- 删除字典 -->
+    <delete id="deleteDic">
+        delete
+        from dic
+        where dic_id = #{dicId}
+    </delete>
+</mapper>
