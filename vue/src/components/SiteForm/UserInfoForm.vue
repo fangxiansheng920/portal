@@ -214,10 +214,10 @@ const getUserInfo = async () => {
 // 头像上传成功回调（获取URL）
 const handleAvatarUploadSuccess = (response) => {
   if (response.code === 200) {
-    // 更新临时头像
-    tempAvatarUrl.value = "/avatar/" + response.message;
-    // 更新预览图为本地URL
-    avatar.value = "/avatar/" + response.message;
+    // 拼接完整头像URL（基础地址从环境变量获取）
+    const fullAvatarUrl = import.meta.env.VITE_API_BASE_API + '/avatar/' + response.message;
+    tempAvatarUrl.value = fullAvatarUrl;
+    avatar.value = fullAvatarUrl; // 关键：使用完整URL
     ElMessage.success('头像上传成功');
   } else {
     ElMessage.error(response.message || '头像上传失败，请重试');

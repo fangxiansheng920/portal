@@ -375,7 +375,9 @@ const hasQrCode = computed(() => {
 // 图片上传成功处理
 const handleQrUploadSuccess = (response) => {
   if (response.code === 200) {
-    formData.qrUrl = response.message;
+    // 拼接完整站点图片URL
+    const fullQrUrl = import.meta.env.VITE_API_BASE_API + '/website/' + response.message;
+    formData.qrUrl = fullQrUrl; // 关键：使用完整URL
     ElMessage.success('图片上传预览成功');
     formData.isQrFileChanged = true;
   } else {
@@ -385,8 +387,9 @@ const handleQrUploadSuccess = (response) => {
 
 function handleAvatarSuccess(res) {
   if (res.code === 200) {
+    const fullLogoUrl = import.meta.env.VITE_API_BASE_API + '/website/' + res.message;
+    formData.portalLogo = fullLogoUrl; // 关键：使用完整URL
     ElMessage.success('图片上传成功');
-    formData.portalLogo = res.message;
   } else {
     ElMessage.error(res.message || '图片上传失败');
   }
