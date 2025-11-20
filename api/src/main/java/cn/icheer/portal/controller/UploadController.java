@@ -58,4 +58,22 @@ public class UploadController {
             return ResponseResult.fail(HttpStatusEnum.UNAUTHORIZED.getCode(), "未登录或token失效");
         }
     }
+
+    @RequestMapping("/uploadImage")
+    public ResponseResult uploadImage(MultipartFile file) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            JWTUserDetails user = (JWTUserDetails) authentication.getPrincipal();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss.SSS");
+            String timestamp = LocalDateTime.now().format(formatter);
+            String s = UUID.randomUUID() + "_" + timestamp + ".jpg";
+            File f = new File("C:/Users/28117/Desktop/work/pictures/website/" + s);
+            file.transferTo(f);
+            log.info("Upload File success.");
+            return ResponseResult.success(s);
+        } catch (Exception e) {
+            log.error("Upload File error.", e);
+            return ResponseResult.fail(HttpStatusEnum.UNAUTHORIZED.getCode(), "未登录或token失效");
+        }
+    }
 }
