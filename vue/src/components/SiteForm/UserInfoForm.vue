@@ -215,9 +215,9 @@ const getUserInfo = async () => {
 const handleAvatarUploadSuccess = (response) => {
   if (response.code === 200) {
     // 更新临时头像
-    tempAvatarUrl.value = response.message;
-    // 更新预览图为服务器URL
-    avatar.value = response.message;
+    tempAvatarUrl.value = "/avatar/" + response.message;
+    // 更新预览图为本地URL
+    avatar.value = "/avatar/" + response.message;
     ElMessage.success('头像上传成功');
   } else {
     ElMessage.error(response.message || '头像上传失败，请重试');

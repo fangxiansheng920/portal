@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 
 @Slf4j
@@ -29,8 +30,8 @@ public class UploadController {
             JWTUserDetails user = (JWTUserDetails) authentication.getPrincipal();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss.SSS");
             String timestamp = LocalDateTime.now().format(formatter);
-            String s = user.getUsername() + "_" + timestamp + ".jpg";
-            File f = new File("C:/Users/28117/Desktop/作业/pictures/avatars/" + s);
+            String s = UUID.randomUUID() + "_" + timestamp + ".jpg";
+            File f = new File("C:/Users/28117/Desktop/work/pictures/avatar/" + s);
             file.transferTo(f);
             log.info("Upload File success.");
             return ResponseResult.success(s);
@@ -47,8 +48,8 @@ public class UploadController {
             JWTUserDetails user = (JWTUserDetails) authentication.getPrincipal();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss.SSS");
             String timestamp = LocalDateTime.now().format(formatter);
-            String s = user.getUsername() + "_" + timestamp + ".jpg";
-            File f = new File("C:/Users/28117/Desktop/作业/pictures/website/" + s);
+            String s = UUID.randomUUID() + "_" + timestamp + ".jpg";
+            File f = new File("C:/Users/28117/Desktop/work/pictures/website/" + s);
             file.transferTo(f);
             log.info("Upload File success.");
             return ResponseResult.success(s);
