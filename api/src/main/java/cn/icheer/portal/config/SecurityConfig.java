@@ -32,6 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 必须放在最前：放行所有 OPTIONS 浏览器预检请求
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/open/**").permitAll() // 公开访问
+                .antMatchers("/avatar/**").permitAll() // 允许匿名访问头像资源
+                .antMatchers("/website/**").permitAll()
                 .antMatchers("/portal/**").authenticated() // 需认证
                 .anyRequest().authenticated()
                 .and()

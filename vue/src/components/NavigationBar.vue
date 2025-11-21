@@ -83,7 +83,10 @@ onMounted(() => {
 userStore.value = useUserStore()
 })
 // 关键：用 computed 包装，确保响应式跟踪
-const userAvatar = computed(() => userStore.value?.avatar || '')
+const userAvatar = computed(() => {
+  const avatar = userStore.value?.avatar || '';
+  return avatar.startsWith('http') ? avatar : import.meta.env.VITE_API_BASE_API + 'avatar/' + avatar;
+})
 
 const userUserName = computed(() => userStore.value?.userName || '')
 const goToUserProfile=()=>{

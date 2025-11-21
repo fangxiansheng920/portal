@@ -23,7 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         // 因为重写方法后，security里的放行失效了，所以此处得重新放行
         String uri = request.getRequestURI();
-        if (uri.startsWith("/open/")) {
+        if (uri.startsWith("/open/") || uri.startsWith("/avatar/") || uri.startsWith("/website/")) {
             filterChain.doFilter(request, response);
             return;
         }

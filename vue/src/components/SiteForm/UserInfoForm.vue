@@ -191,8 +191,8 @@ const getUserInfo = async () => {
       tempAvatarUrl.value = originalAvatar.value;
       tempUserName.value = originalUserName.value;
 
-      // 更新显示值
-      avatar.value = originalAvatar.value;
+      // 更新显示值 - 头像需要拼接完整URL
+      avatar.value = userData.avatar ? import.meta.env.VITE_API_BASE_API + 'avatar/' + userData.avatar : '';
       tempUserName.value = originalUserName.value;
       // 其他用户信息
       epWxId.value = userData.epWxId || '';
@@ -214,10 +214,9 @@ const getUserInfo = async () => {
 // 头像上传成功回调（获取URL）
 const handleAvatarUploadSuccess = (response) => {
   if (response.code === 200) {
-    // 拼接完整头像URL（基础地址从环境变量获取）
-    const fullAvatarUrl = import.meta.env.VITE_API_BASE_API + '/avatar/' + response.message;
-    tempAvatarUrl.value = fullAvatarUrl;
-    avatar.value = fullAvatarUrl; // 关键：使用完整URL
+    // 后端返回的是文件名，直接存储文件名，显示时拼接完整URL
+    tempAvatarUrl.value = response.message;
+    avatar.value = import.meta.env.VITE_API_BASE_API + 'avatar/' + response.message;
     ElMessage.success('头像上传成功');
   } else {
     ElMessage.error(response.message || '头像上传失败，请重试');
@@ -267,9 +266,10 @@ const saveProfile = async () => {
 
 
         // 4. 同步更新界面显示
-        avatar.value = userData.avatar || '';
+        // 后端返回的avatar是文件名，需要拼接完整URL显示
+        avatar.value = userData.avatar ? import.meta.env.VITE_API_BASE_API + 'avatar/' + userData.avatar : '';
         tempUserName.value = userData.userName || '';
-        originalAvatar.value = userData.avatar || '';
+        originalAvatar.value = userData.avatar || '';  // 存储原始文件名
         originalUserName.value = userData.userName || '';
 
         localStorage.setItem('userInfo', JSON.stringify(userData));

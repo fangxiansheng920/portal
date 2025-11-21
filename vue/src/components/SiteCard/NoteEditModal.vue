@@ -11,7 +11,7 @@
     >
       <el-avatar
           :size="60"
-          :src="site.portalLogo"
+          :src="getFullPortalLogoUrl(site.portalLogo)"
           style="margin-bottom: 8px"
       />
       <div>
@@ -67,6 +67,10 @@
 
 <script setup>
 import { ref, watch,defineProps,defineEmits } from 'vue';
+
+const getFullPortalLogoUrl = (portalLogo) => {
+  return portalLogo.startsWith('http') ? portalLogo : import.meta.env.VITE_API_BASE_API + 'website/' + portalLogo;
+};
 import {getCollectRemark, modifyCollectRemark} from "@/api/siteData";
 import {ElMessage} from "element-plus";
 

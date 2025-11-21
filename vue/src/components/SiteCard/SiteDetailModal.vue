@@ -6,7 +6,7 @@
     <el-row :gutter="20" class=" row-flex-start">
       <el-avatar
           :size="60"
-          :src="site.portalLogo"
+          :src="getFullPortalLogoUrl(site.portalLogo)"
           style="margin-bottom: 8px"
       />
       <el-space class="note-container">
@@ -42,6 +42,10 @@
 
 <script setup>
 import {ref, watch, defineProps, onMounted} from 'vue';
+
+const getFullPortalLogoUrl = (portalLogo) => {
+  return portalLogo.startsWith('http') ? portalLogo : import.meta.env.VITE_API_BASE_API + 'website/' + portalLogo;
+};
 import {getCollectRemark,} from "@/api/siteData";
 import {ElMessage} from "element-plus";
 

@@ -100,7 +100,7 @@
                     @click="detailVisible=!detailVisible"
                     class="site-logo"
                     v-if="props.site.portalLogo"
-                    :src="props.site.portalLogo"
+                    :src="getFullPortalLogoUrl(props.site.portalLogo)"
                     size="large"
                 />
                 <el-avatar v-else size="large">404</el-avatar>
@@ -170,6 +170,10 @@
 </template>
 <script setup>
 import {defineProps, defineEmits, ref,watch} from 'vue';
+
+const getFullPortalLogoUrl = (portalLogo) => {
+  return portalLogo.startsWith('http') ? portalLogo : import.meta.env.VITE_API_BASE_API + 'website/' + portalLogo;
+};
 import { ArrowRightBold, Delete, Edit,List} from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ArrowUndoOutline,ArrowUp,HeartSharp,OpenOutline,HeartDislike } from '@vicons/ionicons5';
